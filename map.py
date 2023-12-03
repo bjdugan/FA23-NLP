@@ -8,9 +8,9 @@ import altair as alt
 alt.data_transformers.enable("vegafusion")
 usa = alt.topo_feature(vega_data.us_10m.url, "states")
 
-# note: must chnange to current directory to run locally, e.g
+# note: might need to chnange to current directory to run locally, e.g
 # cd "c:/Users/Brendan/Documents/Courses/Data Science MS-Cert/FA23-DSCI D590/group project/"
-# streamlit run "c:/Users/Brendan/Documents/Courses/Data Science MS-Cert/FA23-DSCI D590/group project/map_wdcld.py"
+# streamlit run "c:/Users/Brendan/Documents/Courses/Data Science MS-Cert/FA23-DSCI D590/group project/map.py"
 
 # see https://docs.streamlit.io/library/get-started/create-an-app#lets-put-it-all-together
 
@@ -18,6 +18,25 @@ usa = alt.topo_feature(vega_data.us_10m.url, "states")
 # though it fails with error "C error: Expected 1 fields in line 100, saw 3" delimiter issue? guessing type issue?
 data = pd.read_csv("C:/Users/Brendan/Documents/Courses/Data Science MS-Cert/FA23-DSCI D590/group project/mcdonalds_reviews.csv", 
                    delimiter=",")
+
+# create store_id from unique lat/lon
+latlon = pd.DataFrame(
+         {"latitude": data.latitude.unique(),
+          "longitude": data.longitude.unique(),
+          })
+latlon["store_id"] = [i for i in range(1, len(latlon)+1)]
+
+data = data.join(latlon.set_index(["latitude", "longitude"]), 
+                 on = ["latitude", "longitude"], 
+                 how = "left")
+
+st.markdown("## Mapping customer sentiment")
+# we can use boilerplate language here if at all
+'''Understanding customer sentiment can be crucial to business decisions. While customers provide ratings (:star:), 
+they also provide a large body of qualitative feedback that can be difficult to assess at scale. 
+Using NLP methods, sentiments ("positive" or "negative") predicted from text reviews as well as polarity scores allow further
+insight into customers' attitudes that can help identify low-performing stores for intervention or high-performing stores to model after.
+'''
 
 state_selected = st.radio("Pick a state (refresh to reset):", data.state_abb.unique(), 
                           horizontal = True, index = None)
@@ -43,11 +62,21 @@ c3.metric("Average :star:'s", d.rating_num.mean().round(2),
           delta = c3_delta.round(2))
 
 # cond: if state_selected == None show full data in map, otherwise show d (filtered to state)
-
+if (state_selected) == None:
+    group_var = "state_abb"
+    group_var_label = "state"
+    lat_lon = [39.8282, 98.5796]
+else:
+    group_var = "store_id"
+    group_var_label = "store"
+    lat_lon = [
+        d.latitude.mean(),
+        d.longitude.mean()
+    ]
 # in encoding can use e.g. x='sum(name)' alt.X('name', aggregate='sum')
 map_state = alt.Chart(usa).mark_geoshape(
     stroke = "white",
-    fill = "lightgrey"
+    fill = "grey"
 ).transform_lookup(
     lookup = "id", 
     from_ = alt.LookupData(data = d, 
@@ -57,14 +86,8 @@ map_state = alt.Chart(usa).mark_geoshape(
     type = "albersUsa"
 ).properties(
     height = 600,
-    width = 600,
-    title = "title"
+    width = 800,
 )
-
-if (state_selected) == None:
-    group_var = "state_abb"
-else:
-    group_var = "store_id"
 
 map_sent = alt.Chart(d).transform_aggregate(
     latitude = "mean(latitude)",
@@ -73,30 +96,31 @@ map_sent = alt.Chart(d).transform_aggregate(
     total_reviews = "count()",
     avg_sentiment = "mean(sentiment_num)",
     avg_polarity = "mean(polarity)",
-    groupby = ["state_abb"]
-).mark_circle().encode(
+    groupby = [group_var]
+).mark_circle(size = 150).encode(
     latitude = "latitude:Q",
     longitude = "longitude:Q",
-    size = "avg_sentiment:Q",
-    color = "avg_sentiment:Q",
+    color = alt.Color("avg_sentiment:Q",
+                      scale = alt.Scale( #type = "quantize", 
+                                        scheme = "redblue",
+                                        domain = [0, 1])),
     tooltip = list(
-        ["state_abb:N", 
+        [group_var + ":N", 
         "positive_reviews:Q",
         "total_reviews:Q",
         "avg_sentiment:Q",
         "avg_polarity:Q"
     ])
+).properties(
+    title = "Review sentiments by " + group_var_label
 )
 
 plt = map_state + map_sent
 
 st.altair_chart(plt, 
-                use_container_width = False,
+                use_container_width = True,
                 theme = "streamlit")
 
-# add store id back to data and then change group_by to store_id if state_selected is not none
-
-# if we want to show dataset with applicable filters
-if st.checkbox("Preview data"):
+if st.checkbox("Preview data", value = True):
     st.subheader("Raw data")
-    st.write(d)
+    st.write(d[["store_id", "state_name", "sentiment", "polarity", "review_clean"]])
