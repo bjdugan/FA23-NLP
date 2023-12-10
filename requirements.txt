@@ -1,0 +1,6 @@
+streamlit
+pandas
+numpy
+vega_datasets
+altair
+plotly.express
