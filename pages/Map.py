@@ -8,9 +8,10 @@ import altair as alt
 alt.data_transformers.enable("vegafusion")
 usa = alt.topo_feature(vega_data.us_10m.url, "states")
 
-data = pd.read_csv("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv?token=GHSAT0AAAAAAAAAU2AJ5DZIEXWDV7RL6BUYZL6KG5Q",
-                   delimiter=",")
-
+#data = pd.read_csv("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv?token=GHSAT0AAAAAAAAAU2AJ5DZIEXWDV7RL6BUYZL6KG5Q",
+#                   delimiter=",")
+data = pd.read_csv("https://raw.githubusercontent.com/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv",
+                  delimiter = ",")
 # create store_id from unique lat/lon
 latlon = pd.DataFrame(
          {"latitude": data.latitude.unique(),
