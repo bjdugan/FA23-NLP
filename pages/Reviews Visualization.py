@@ -7,9 +7,10 @@ st.write("""
 """)
 st.write('---')
 
-data = pd.read_csv("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv?token=GHSAT0AAAAAAAAAU2AJ5DZIEXWDV7RL6BUYZL6KG5Q",
-                   delimiter=",")
-
+#data = pd.read_csv("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv?token=GHSAT0AAAAAAAAAU2AJ5DZIEXWDV7RL6BUYZL6KG5Q",
+#                   delimiter=",")
+data = pd.read_csv("https://raw.githubusercontent.com/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv",
+                   delimiter = ",")
 
 st.write("## Sentiment Analysis Based on Reviews")
 if st.checkbox("Show Data"):
