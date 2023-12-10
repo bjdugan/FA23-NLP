@@ -1,7 +1,4 @@
-
-
 import streamlit as st
-from PIL import Image
 
 st.set_page_config(
     page_title="Multipage App",
@@ -10,32 +7,39 @@ st.set_page_config(
 
 st.sidebar.success("Select a page above.")
 
-image = Image.open("/Users/olgavyrvich/Macdonalds/McDonald's_SVG_logo.svg.png")
-st.image(image, '') 
-
+st.image("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/McDonald's_SVG_logo.svg?token=GHSAT0AAAAAAAAAU2AJ4W4ZYHZXHRASTLDGZL6KMMQ")
 
 st.write("""
-# I'm Loving It?: Sentiment analysis of McDonald's customer reviews
+# I'm Loving It? Sentiment analysis of McDonald's customer reviews
 
+Our goal is to be able to create and display sentiment
+for McDonald's locations based on customer feedback left through over Google 30,000 
+[reviews](https://www.kaggle.com/datasets/nelgiriyewithana/mcdonalds-store-reviews). 
 
-Our goal for our application is to be able to create and display sentiment
-scores for McDonald's locations based on customer feedback left through Google reviews. 
-
-The dataset used for this analysis, downloaded from https://www.kaggle.com/datasets/nelgiriyewithana/mcdonalds-store-reviews
+Understanding customer sentiment can be crucial to business decisions. While customers provide ratings (:star:), 
+they also provide a large body of qualitative feedback that can be difficult to assess at scale. 
+Using NLP [methods](https://raw.github.iu.edu/bjdugan/FA23-NLP/main/clean.ipynb?token=GHSAT0AAAAAAAAAU2AJOOSI2TDNUPHQARHOZL6KPFA),
+ sentiments ("positive" or "negative") predicted from text reviews as well as polarity scores and direct ratings :star: allow further
+insight into customers' attitudes that can help identify low-performing stores for intervention or high-performing stores to model after.
 """)
 st.write('---')
 
-
-
 st.write("""
-#  Reviews Visualization
-In this section the data is explored barplots visualization methods. 
+##  Reviews Visualization
+Barplots explore customer review sentiments. 
 """)
 st.write('---')
 
+st.write("""
+##  Map
+Mapping customer sentiment.
+""")
+
+st.write('---')
 
 st.write("""
-#  map
-Mapping customer sentiment 
-""")
-st.write('---')
+    Note: text data have been cleaned but may contain offensive words.
+    \nIU Fall 2023 DSCI-D590 Natural Language Processing
+    \nGroup 10: Olga Vyrvich, Jill Henry, Brendan Dugan
+"""
+)
