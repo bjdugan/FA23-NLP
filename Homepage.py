@@ -7,8 +7,8 @@ st.set_page_config(
 
 st.sidebar.success("Select a page above.")
 
-st.image("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/McDonald's_SVG_logo.svg?token=GHSAT0AAAAAAAAAU2AJ4W4ZYHZXHRASTLDGZL6KMMQ")
-
+#st.image("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/McDonald's_SVG_logo.svg?token=GHSAT0AAAAAAAAAU2AJ4W4ZYHZXHRASTLDGZL6KMMQ")
+st.image("https://raw.githubusercontent.com/bjdugan/FA23-NLP/main/McDonald's_SVG_logo.svg")
 st.write("""
 # I'm Loving It? Sentiment analysis of McDonald's customer reviews
 
