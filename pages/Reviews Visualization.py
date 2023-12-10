@@ -1,59 +1,44 @@
-
-
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.express as px
-from nltk.corpus import stopwords
-import plotly.express as px
-from wordcloud import WordCloud, STOPWORDS
-import numpy as np
-from nltk.stem import WordNetLemmatizer
 
 st.write("""
 # Reviews Visualization 
-### Barplots of the dataset features
 """)
 st.write('---')
 
-
-def sentiment(rating):
-    if rating in ['1 star', '2 stars']:
-        return 'negative'
-    elif rating == '3 stars':
-        return 'neutral'
-    else:
-        return 'positive'
-    
-
-data = pd.read_csv('/Users/olgavyrvich/Macdonalds/McDonald_s_Reviews.csv', encoding='latin1')
-data['store_sentiment'] = data['rating'].apply(sentiment)
+data = pd.read_csv("https://raw.github.iu.edu/bjdugan/FA23-NLP/main/mcdonalds_reviews.csv?token=GHSAT0AAAAAAAAAU2AJ5DZIEXWDV7RL6BUYZL6KG5Q",
+                   delimiter=",")
 
 
-st.title("Sentiment Analysis Based on Reviews")
+st.write("## Sentiment Analysis Based on Reviews")
 if st.checkbox("Show Data"):
-    st.write(data.head(50))
+    st.write(data[["store_id", "state_name", "sentiment", "polarity", "review_clean"]])
 
-sentiment=data['store_sentiment'].value_counts()
+sentiment=data['sentiment'].value_counts()
 sentiment=pd.DataFrame({'Sentiment':sentiment.index,'Reviews':sentiment.values})
 
-fig = px.bar(sentiment, x='Sentiment', y='Reviews', color= 'Reviews',height=500)
-st.plotly_chart(fig)
+st.write("Aggregate sentiments of reviews")
+st.plotly_chart(
+    px.bar(sentiment, x='Sentiment', y='Reviews', color= 'Reviews', height=500)
+)
 
-
-data['state'] = data['store_address'].str.split(', ').str[-2].str.split().str[0]
-state_data=data['state'].value_counts()
+state_data=data['state_abb'].value_counts()
+st.write("Total reviews by state")
 state_data=pd.DataFrame({'Sentiment':state_data.index,'Reviews':state_data.values})
 
 fig1 = px.bar(state_data, x='Sentiment', y='Reviews', color= 'Reviews',height=500)
 st.plotly_chart(fig1)
 
-st.sidebar.subheader("States by sentiment")
+st.sidebar.subheader("Sentiments by State:")
 choice = st.sidebar.multiselect("States", ('FL ','TX', 'CA', 'NY','NJ','NV','PA','UT','IL','DC','VA'), key = '0')
 
 if len(choice)>0:
-    state_data=data[data.state.isin(choice)]
-    fig2 = px.histogram(state_data, x='state', y='store_sentiment', histfunc='count', color='store_sentiment',labels={'store_sentiment':'reviews'}, height=600, width=800)
+    st.write("Sentiments by state")
+    state_data=data[data.state_abb.isin(choice)]
+    fig2 = px.histogram(state_data, x='state_abb', y='sentiment', histfunc='count', 
+                        color='sentiment',labels={'sentiment':'reviews'}, 
+                        height=600, width=800)
     st.plotly_chart(fig2)
 
 
